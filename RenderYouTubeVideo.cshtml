@@ -1,0 +1,35 @@
+@helper RenderYouTubeVideo(string videoUrl)
+{
+    string pattern = @"<iframe[^>]+src\s*=\s*[""']([^""']+)[""']";
+    string IframeEmbedPattern = @"<iframe\b";
+    string patternVideoId = @"watch\?v=([\w-]+)";
+    string youSharelinkPattern = "/([^/]+)$";
+
+    System.Text.RegularExpressions.Match matchEmbed = System.Text.RegularExpressions.Regex.Match(videoUrl, IframeEmbedPattern);
+    System.Text.RegularExpressions.Match matchVideoId = System.Text.RegularExpressions.Regex.Match(videoUrl, patternVideoId);
+    System.Text.RegularExpressions.Match matchShareLink = System.Text.RegularExpressions.Regex.Match(videoUrl, youSharelinkPattern);
+
+    if (matchEmbed.Success)
+    {
+        System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(videoUrl, pattern);
+
+        if (match.Success)
+        {
+            <iframe width='560' height='315' src='@match.Groups[1].Value' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+        }
+    }
+    else
+    {
+        if (matchVideoId.Success)
+        {
+            <iframe width='560' height='315' src='https://www.youtube.com/embed/@matchVideoId.Groups[1].Value' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+        }
+        else if (matchShareLink.Success)
+        {
+            <iframe width='560' height='315' src='https://www.youtube.com/embed/@matchShareLink.Groups[1].Value' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+        }
+    }
+}
+
+// Usage 
+//@RenderYouTubeVideo("https://www.youtube.com/embed/9bZkp7q19f0")
